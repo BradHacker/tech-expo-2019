@@ -1,6 +1,10 @@
 #include <Servo.h>
 
 #define MOVEMENT_SPEED 1
+#define SPEAKER_1 8
+#define SPEAKER_2 9
+#define SPEAKER_3 10
+#define SPEAKER_4 11
 
 char faceState = '0';
 int angle = 90;
@@ -11,6 +15,10 @@ Servo servo;
 void setup() {
   // Init servo and set to 90 degrees
   servo.attach(3);
+  pinMode(SPEAKER_1, OUTPUT);
+  pinMode(SPEAKER_2, OUTPUT);
+  pinMode(SPEAKER_3, OUTPUT);
+  pinMode(SPEAKER_4, OUTPUT);
   Serial.begin(9600);
   servo.write(90);
   delay(1000);
@@ -40,7 +48,25 @@ void loop() {
     }
     // Set servo angle
     servo.write(angle);
+    // Turn on appropriate speakers
+    //char[] buf;
+    //Serial.readBytesUntil('|', buf, 3);
+    activateSpeakers(angle);
     // Send back current angle to Processing
     Serial.println(angle);
   }
+}
+
+void activateSpeakers(int a) {
+  if (a < 180 && a > 130) digitalWrite(SPEAKER_1, HIGH);
+  else digitalWrite(SPEAKER_1, LOW);
+
+  if (a < 140 && a > 85) digitalWrite(SPEAKER_2, HIGH);
+  else digitalWrite(SPEAKER_2, LOW);
+
+  if (a < 95 && a > 40) digitalWrite(SPEAKER_3, HIGH);
+  else digitalWrite(SPEAKER_3, LOW);
+
+  if (a < 50 && a > 0) digitalWrite(SPEAKER_4, HIGH);
+  else digitalWrite(SPEAKER_4, LOW);
 }

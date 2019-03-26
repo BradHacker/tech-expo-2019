@@ -1,4 +1,4 @@
-import processing.serial.*;
+import processing.serial.*; //<>//
 
 import processing.video.*;
 
@@ -15,15 +15,23 @@ int LARGEST_FACE = 200;
 
 int angle = 90;
 
-// Serial port /dev/cu.usbmodem14601
+// Serial port /dev/cu.usbmodem141201
 void setup() {
+  println("Welcome");
   size(1280, 960);
-  println(Capture.list()[0]);
-  video = new Capture(this, Capture.list()[0]);
+  //println("Finding Camera Devices...");
+  //String[] cameraList = Capture.list();
+  //println("Found Devices: " + cameraList); //<>//
+  //println(cameraList[0]);
+  
+  // name=USB Camera,size=1280x960,fps=30
+  println("Attaching video...");
+  video = new Capture(this, 1280, 960, "USB Camera", 30);
   opencv = new OpenCV(this, width, height);
+  println("Loading face detection...");
   opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
   
-  arduino = new Serial(this, "/dev/cu.usbmodem14601", 9600);
+  arduino = new Serial(this, "/dev/cu.usbmodem141201", 9600);
   
   THRESHHOLD = width / 25;
   SMALLEST_FACE = width / 7;
@@ -36,6 +44,12 @@ void setup() {
 }
 
 void draw() {
+  char moveCommand = '4';
+  char speaker1 = '0';
+  char speaker2 = '0';
+  char speaker3 = '0';
+  char speaker4 = '0';
+  
   if (video.height > 0 && video.width > 0) {
     opencv.loadImage(video);
     //opencv.contrast(.2);
@@ -75,25 +89,23 @@ void draw() {
       // 1 - move left
       // 0 - don't move
       if (middleX > width / 2 + THRESHHOLD) {
-        arduino.write('2');
+        moveCommand = '2';
         // println(2);
       }
       else if (middleX < width / 2 - THRESHHOLD) {
-        arduino.write('1');
+        moveCommand = '1';
         // println(1);
       }
       else {
-        arduino.write('0');
+        moveCommand = '0';
         // println(0);
       }
-    }  else {
-      arduino.write('4');
-      // println(4);
-    }
-  } else {
-    arduino.write('4');
-    // println(4);
-  }
+      
+      println("Face Area: " + faces[0].width * faces[0].height);
+    } // if (faces.length > 0)
+  } // if (video.height > 0 && video.width > 0)
+  
+  arduino.write(moveCommand);
 }
 
 void captureEvent(Capture c) {
@@ -105,13 +117,13 @@ void serialEvent() {
     if (arduino != null && arduino.active()) {
       String val = "";
       byte[] b = arduino.readBytes();
-      printArray(b);
+      //printArray(b);
       for (int i = 0; i < b.length; i++) {
         val += (char) b[i];
       }
-      println("val: " + val);
-    
-      val.trim();
+      
+      val = val.trim();
+      //println("val: " + val);
       
       angle = Integer.parseInt(val);
     }
