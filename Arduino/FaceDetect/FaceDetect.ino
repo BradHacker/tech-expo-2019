@@ -6,6 +6,8 @@
 #define SPEAKER_3 10
 #define SPEAKER_4 11
 
+#define OVERLAP 20
+
 char faceState = '0';
 int angle = 90;
 unsigned long lastFaceTime = 0;
@@ -19,6 +21,10 @@ void setup() {
   pinMode(SPEAKER_2, OUTPUT);
   pinMode(SPEAKER_3, OUTPUT);
   pinMode(SPEAKER_4, OUTPUT);
+  digitalWrite(SPEAKER_1, HIGH);
+  digitalWrite(SPEAKER_2, HIGH);
+  digitalWrite(SPEAKER_3, HIGH);
+  digitalWrite(SPEAKER_4, HIGH);
   Serial.begin(9600);
   servo.write(90);
   delay(1000);
@@ -58,15 +64,15 @@ void loop() {
 }
 
 void activateSpeakers(int a) {
-  if (a < 180 && a > 130) digitalWrite(SPEAKER_1, HIGH);
-  else digitalWrite(SPEAKER_1, LOW);
+  if (a < 180 && a > (135 - (OVERLAP / 2))) digitalWrite(SPEAKER_1, LOW);
+  else digitalWrite(SPEAKER_1, HIGH);
 
-  if (a < 140 && a > 85) digitalWrite(SPEAKER_2, HIGH);
-  else digitalWrite(SPEAKER_2, LOW);
+  if (a < (135 + (OVERLAP / 2)) && a > (90 - (OVERLAP / 2))) digitalWrite(SPEAKER_2, LOW);
+  else digitalWrite(SPEAKER_2, HIGH);
 
-  if (a < 95 && a > 40) digitalWrite(SPEAKER_3, HIGH);
-  else digitalWrite(SPEAKER_3, LOW);
+  if (a < (90 + (OVERLAP / 2)) && a > (45 - (OVERLAP / 2))) digitalWrite(SPEAKER_3, LOW);
+  else digitalWrite(SPEAKER_3, HIGH);
 
-  if (a < 50 && a > 0) digitalWrite(SPEAKER_4, HIGH);
-  else digitalWrite(SPEAKER_4, LOW);
+  if (a < (45 + (OVERLAP / 2)) && a > 0) digitalWrite(SPEAKER_4, LOW);
+  else digitalWrite(SPEAKER_4, HIGH);
 }
