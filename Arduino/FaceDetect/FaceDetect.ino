@@ -52,6 +52,10 @@ void loop() {
     if (faceState == 4 && millisOnLoop - lastFaceTime > 6000UL) {
       angle = 90;
     }
+  }
+  if(millisOnLoop - lastFaceTime > 6000UL) {
+      angle = 90;
+    }
     // Set servo angle
     servo.write(angle);
     // Turn on appropriate speakers
@@ -60,7 +64,6 @@ void loop() {
     activateSpeakers(angle);
     // Send back current angle to Processing
     Serial.println(angle);
-  }
 }
 
 void activateSpeakers(int a) {
